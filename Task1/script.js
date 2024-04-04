@@ -59,20 +59,36 @@ buttonSave.addEventListener('click', function() {
   let buttons = clone.querySelectorAll('button');
   buttons.forEach(button => clone.removeChild(button));
 
-  // Legger til en fjern for å kunne ta de vekk fra listen
-  let buttonRemove = document.createElement('button');
-  buttonRemove.textContent = 'Fjern';
-  buttonRemove.addEventListener('click', function() {
-    favoritesContainer.removeChild(li); // Remove the card from the favorites list
-  });
-  clone.appendChild(buttonRemove);
+// Legger til en fjern for å kunne ta de vekk fra listen
+let buttonRemove = document.createElement('button');
+buttonRemove.textContent = 'Fjern';
+buttonRemove.addEventListener('click', function() {
+   favoritesContainer.removeChild(li); // Remove the card from the favorites list
+
+   // Fjern-knappen fjerner også fra localStorage
+   let favoritePokemons = JSON.parse(localStorage.getItem('favoritePokemons')) || [];
+   let index = favoritePokemons.findIndex(pokemon => pokemon.name === h2.textContent);
+   if (index !== -1) {
+      favoritePokemons.splice(index, 1);
+      localStorage.setItem('favoritePokemons', JSON.stringify(favoritePokemons));
+   }
+});
+clone.appendChild(buttonRemove);
+  
 
   // Her sjekker vi om det er plass til flere pokemons i listen. Mer enn 5 pokemons er ikke tillatt.
+  let favoritePokemons = JSON.parse(localStorage.getItem('favoritePokemons')) || [];
+  let existingPokemon = favoritePokemons.find(pokemon => pokemon.name === pokeData.name);
+  if (existingPokemon) {
+    alert('Denne Pokémonen er allerede i favorittlisten din.');
+    return;
+  }
+
+  // Add the Pokemon to the favorites list
   if (favoritesContainer.getElementsByTagName('li').length < 5) { // Limit of 5 pokemons
     li.appendChild(clone);
     favoritesContainer.appendChild(li);
-    let favoritePokemons = JSON.parse(localStorage.getItem('favoritePokemons')) || [];
-    favoritePokemons.push(pokeData.name);
+    favoritePokemons.push({ name: pokeData.name, type: pokeData.types[0].type.name });
     localStorage.setItem('favoritePokemons', JSON.stringify(favoritePokemons));
   } else {
     alert('Du kan bare lagre opptil 5 pokemons i favorittlisten din.');
