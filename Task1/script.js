@@ -129,7 +129,7 @@ async function fetchPokemon() {
     });
 
     div.dataset.types = pokemonTypes.join(", "); // I tilfelle flere typer, skilles de med et komma.
-    
+
     // Legger til bilde, knapper og tekst til div-elementet
     div.appendChild(img);
     div.appendChild(h2);
@@ -174,6 +174,38 @@ async function fetchPokemon() {
   fetchAllTypes().catch((error) =>
     console.error("Det oppstod en feil:", error)
   );
+
+// Henter inn knappen fra HTML
+let createPokemonButton = document.getElementById('create-pokemon');
+
+// Lager en eventListener som lytter etter klikk på knappen
+createPokemonButton.addEventListener('click', function() {
+   // Prompt the user for the name and type of the new Pokemon
+   let name = prompt('Skriv inn navnet på den nye Pokemonen:');
+   let type = prompt('Skriv inn typen til den nye Pokemonen:');
+
+   // Lager et nytt kort, med informasjonen som brukeren har skrevet inn
+   let div = document.createElement('div');
+   div.className = 'pokemon-card';
+   div.style.backgroundColor = typeColors[type]; // Dette setter riktig farge basert på typen som er skrevet inn.
+   let img = document.createElement('img');
+   img.src = 'assets/default-image.png'; // Laget meg en pokemon. 
+   img.style.width = '96px'; // Samme bredde som de andre
+   img.style.height = '96px'; // samme høyde som de andre
+   let h2 = document.createElement('h2');
+   h2.textContent = name;
+   let p = document.createElement('p');
+   p.textContent = type;
+
+   // Legger til bildet og teksten til div-elementet
+   div.appendChild(img);
+   div.appendChild(h2);
+   div.appendChild(p);
+
+   // Legger kortet inn sammen med de andre kortene
+   let container = document.getElementById('pokemon-container');
+   container.appendChild(div);
+});
 }
 
 fetchPokemon().catch((error) => console.error("Det oppstod en feil:", error));
