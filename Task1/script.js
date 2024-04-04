@@ -81,9 +81,18 @@ buttonSave.addEventListener('click', function() {
 //Slett knappen
 let buttonDelete = document.createElement("button");
 buttonDelete.textContent = "Slett";
+
 //Rediger knappen
 let buttonEdit = document.createElement("button");
 buttonEdit.textContent = "Rediger";
+buttonEdit.addEventListener('click', function() {
+   let newName = prompt('Skriv inn det nye navnet for Pokemonen:');
+   let newType = prompt('Skriv inn den nye typen for Pokemonen:');
+   if (newName) {
+     h2.textContent = newName;
+     p.textContent = newType;
+   }
+ });
 
 
     div.dataset.types = pokemonTypes.join(", "); // I tilfelle flere typer, skilles de med et komma.
