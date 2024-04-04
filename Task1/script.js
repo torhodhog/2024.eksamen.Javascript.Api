@@ -10,6 +10,7 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=50")
             .then(response => response.json())
             .then(pokeData => {
                let div = document.createElement('div');
+               div.className = 'pokemon-card';
                let img = document.createElement('img');
                img.src = pokeData.sprites.front_default;
                let h2 = document.createElement('h2');
@@ -22,6 +23,8 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=50")
                buttonSave.textContent = 'Lagre';
                let buttonDelete = document.createElement('button');
                buttonDelete.textContent = 'Slett';
+               let buttonEdit = document.createElement('button');
+               buttonEdit.textContent = 'Endre';
 
                div.dataset.types = pokemonTypes.join(', ');
 
@@ -30,6 +33,7 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=50")
                div.appendChild(p);
                div.appendChild(buttonSave)
                div.appendChild(buttonDelete)
+               div.appendChild(buttonEdit)
 
                container.appendChild(div);
             });
