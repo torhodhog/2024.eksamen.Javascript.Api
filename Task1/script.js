@@ -5,10 +5,12 @@ async function fetchPokemon() {
    let container = document.getElementById('pokemon-container');
    let types = new Set();
 
-   for (const pokemon of data.results) {
+   for (let pokemon of data.results) {
       let response = await fetch(pokemon.url);
       let pokeData = await response.json();
 
+
+      // Lager div-elementer for hvert pokemon-kort
       let div = document.createElement('div');
       div.className = 'pokemon-card';
       let img = document.createElement('img');
@@ -24,17 +26,17 @@ async function fetchPokemon() {
       let buttonDelete = document.createElement('button');
       buttonDelete.textContent = 'Slett';
       let buttonEdit = document.createElement('button');
-      buttonEdit.textContent = 'Endre';
+      buttonEdit.textContent = 'Rediger';
 
       div.dataset.types = pokemonTypes.join(', ');
-
+      // Legger til bilde, knapper og tekst til div-elementet
       div.appendChild(img);
       div.appendChild(h2);
       div.appendChild(p);
       div.appendChild(buttonSave)
       div.appendChild(buttonDelete)
       div.appendChild(buttonEdit)
-
+      // Samler alle div-elementene i containeren
       container.appendChild(div);
    }
 
