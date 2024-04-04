@@ -38,13 +38,31 @@ button{
 
 #saved-pokemons{
    right: 40px;
-   border: 2px solid black;
+   border: none;
    margin-top: 20px;
    border-radius: 5px;
    padding: 10px;
-   
+   background-color:blanchedalmond;
+}
+
+#saved-pokemons h2{
+   margin-left: 50px;
 }
 
 li{
    list-style: none;
+}
+
+#filter-container h2{
+   margin-left: 20px;
+}
+
+#create-pokemon{
+   margin-top: 20px;
+   margin-left: 20px;
+   border-radius: 5px;
+   border: none;
+   padding: 10px;
+   color: white;
+   background-color:crimson;
 }

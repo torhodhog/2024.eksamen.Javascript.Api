@@ -1,3 +1,4 @@
+//Her fikk jeg hjelp av min venn internett til å finne passende farger for typene Pokemons. 
 const typeColors = {
   normal: "#A8A77A",
   fire: "#EE8130",
