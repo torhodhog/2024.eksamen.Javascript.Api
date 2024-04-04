@@ -42,12 +42,49 @@ async function fetchPokemon() {
     let pokemonTypes = [pokeData.types[0].type.name];
     p.textContent = pokemonTypes.join(", ");
     pokemonTypes.forEach((type) => types.add(type));
-    let buttonSave = document.createElement("button");
-    buttonSave.textContent = "Lagre";
-    let buttonDelete = document.createElement("button");
-    buttonDelete.textContent = "Slett";
-    let buttonEdit = document.createElement("button");
-    buttonEdit.textContent = "Rediger";
+   
+//THE BUTTONS
+
+//Lagre pokemons knappen. 
+let buttonSave = document.createElement('button');
+buttonSave.textContent = 'Lagre';
+buttonSave.className = 'save'; // Add a class to the button
+buttonSave.addEventListener('click', function() {
+  let favoritesContainer = document.getElementById('saved-pokemons-container');
+  let li = document.createElement('li');
+  let clone = div.cloneNode(true); // Clone the card
+
+  // Fjerner knappene lagre, rediger, og slett
+  let buttons = clone.querySelectorAll('button');
+  buttons.forEach(button => clone.removeChild(button));
+
+  // Legger til en fjern for å kunne ta de vekk fra listen
+  let buttonRemove = document.createElement('button');
+  buttonRemove.textContent = 'Fjern';
+  buttonRemove.addEventListener('click', function() {
+    favoritesContainer.removeChild(li); // Remove the card from the favorites list
+  });
+  clone.appendChild(buttonRemove);
+
+  // Her sjekker vi om det er plass til flere pokemons i listen. Mer enn 5 pokemons er ikke tillatt.
+  if (favoritesContainer.getElementsByTagName('li').length < 5) { // Limit of 5 pokemons
+    li.appendChild(clone);
+    favoritesContainer.appendChild(li);
+    let favoritePokemons = JSON.parse(localStorage.getItem('favoritePokemons')) || [];
+    favoritePokemons.push(pokeData.name);
+    localStorage.setItem('favoritePokemons', JSON.stringify(favoritePokemons));
+  } else {
+    alert('Du kan bare lagre opptil 5 pokemons i favorittlisten din.');
+  }
+});
+
+//Slett knappen
+let buttonDelete = document.createElement("button");
+buttonDelete.textContent = "Slett";
+//Rediger knappen
+let buttonEdit = document.createElement("button");
+buttonEdit.textContent = "Rediger";
+
 
     div.dataset.types = pokemonTypes.join(", "); // I tilfelle flere typer, skilles de med et komma.
     // Legger til bilde, knapper og tekst til div-elementet
@@ -62,15 +99,18 @@ async function fetchPokemon() {
   }
 
   async function fetchAllTypes() {
-    let response = await fetch("https://pokeapi.co/api/v2/type"); // Fetcher API på nytt for å finne alle typpene, ikke kun de som vises fra første fetch.
+    let response = await fetch("https://pokeapi.co/api/v2/type?limit=18"); // Fetcher API på nytt for å finne alle typpene, ikke kun de som vises fra første fetch.
     let data = await response.json();
     let select = document.getElementById("type-filter");
-    data.results.forEach((type) => {
-      let option = document.createElement("option");
-      option.value = type.name;
-      option.textContent = type.name;
-      select.appendChild(option);
-    });
+   data.results.forEach((type) => {
+      if (type.name  && type.name ) {
+         let option = document.createElement("option");
+         option.value = type.name;
+         option.textContent = type.name;
+         
+         select.appendChild(option);
+      }
+   });
     select.addEventListener("change", function () {
       let selectedType = this.value;
       let allPokemonCards = document.querySelectorAll(".pokemon-card");
