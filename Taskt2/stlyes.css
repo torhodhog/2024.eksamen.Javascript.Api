@@ -52,17 +52,27 @@ li{
    z-index: 1;
 }
 
+.pokemon img, .pokemon h2, .pokemon p {
+   margin: 0;
+   padding: 0;
+}
+
 .pokemon {
    position: absolute;
    width: 200px;
+   height: 200px; 
    background: white;
    border-radius: 50%;
-   padding: 20px;
+   margin: 20px;
+   display: flex; 
+   justify-content: center; 
+   align-items: center; 
+   flex-direction: column; 
 }
 
 .pokemon:nth-child(1) {
    top: 600px;
-   left: 700px;
+   left: 650px;
 }
 
 .pokemon:nth-child(2) {
@@ -77,6 +87,6 @@ li{
 
 .pokemon:nth-child(4) {
    bottom: 40%;
-   right: 25%;
+   right: 26%;
 }
 
