@@ -6,6 +6,7 @@ window.onload = function () {
   startGameButton.addEventListener("click", function () {
     rulesDiv.style.display = "none"; // Skjuler reglene når spillet starter.
   });
+
 };
 
 function checkHpAndRemoveIfZero(div) {
@@ -13,6 +14,17 @@ function checkHpAndRemoveIfZero(div) {
      div.remove();
    }
  }
+
+
+function restartGame() {
+   document.getElementById("restart").addEventListener("click", function () {
+      location.reload();   
+   })
+}
+
+
+
+ 
 
 async function fetchPokemon() {
   try {
