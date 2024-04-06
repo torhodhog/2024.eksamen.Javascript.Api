@@ -1,10 +1,10 @@
-// In your JavaScript file
+// Legger inn reglene for spillet.
 window.onload = function () {
   let rulesDiv = document.getElementById("rules");
   let startGameButton = document.getElementById("start-game");
 
   startGameButton.addEventListener("click", function () {
-    rulesDiv.style.display = "none";
+    rulesDiv.style.display = "none"; // Skjuler reglene når spillet starter.
   });
 };
 
@@ -42,7 +42,7 @@ async function fetchPokemon() {
           newStatValue = 200; // Legger lik HP og Attack for å gjøre det lettere å spille.
           pokemonDiv.dataset.hp = newStatValue;
         } else if (stat.stat.name === "attack") {
-          newStatValue = 30; // New value for attack
+          newStatValue = 30; // Ny verdi for attack.
           pokemonDiv.dataset.attack = newStatValue;
         }
 
@@ -61,41 +61,66 @@ async function fetchPokemon() {
         attackButton.style.border = "none";
         pokemonDiv.appendChild(attackButton);
 
-        attackButton.addEventListener("click", function () {
-          let targetName = prompt("Hvem vil du angripe?");
-          let pokemonsDivs = Array.from(document.querySelectorAll(".pokemon"));
-          let targetDiv = pokemonsDivs.find(
-            (div) =>
-              div.querySelector("h2").textContent.toLowerCase() ===
-              targetName.toLowerCase()
-          );
 
-          if (targetDiv) {
+      attackButton.addEventListener("click", function () {
+         let targetName = prompt("Hvem vil du angripe?");
+         let pokemonsDivs = Array.from(document.querySelectorAll(".pokemon"));
+         let targetDiv = pokemonsDivs.find(
+            (div) =>
+               div.querySelector("h2").textContent.toLowerCase() ===
+               targetName.toLowerCase()
+         );
+
+         if (targetDiv) {
             targetDiv.dataset.hp -= 30;
             let hpElements = Array.from(targetDiv.querySelectorAll("p"));
             let hpElement = hpElements.find((p) =>
-              p.textContent.includes("hp")
+               p.textContent.includes("hp")
             );
             hpElement.textContent = `hp: ${targetDiv.dataset.hp}`;
-          } else {
+         } else {
             alert("Ingen Pokémon med det navnet ble funnet.");
-          }
-
-         // Venusaur sin tur til å angripe
-         let maxHp = Math.max(...pokemonsDivs.map((div) => div.dataset.hp));
-         let targetDivs = pokemonsDivs.filter((div) => div.dataset.hp == maxHp);
-
-         for (let targetDiv of targetDivs) {
-            targetDiv.dataset.hp -= 30;
-            let hpElements = Array.from(targetDiv.querySelectorAll("p"));
-            let hpElement = hpElements.find((p) => p.textContent.includes("hp"));
-            hpElement.textContent = `hp: ${targetDiv.dataset.hp}`;
          }
 
-         let targetNames = targetDivs.map(div => div.querySelector("h2").textContent).join(", ");
-         alert(`Venusaur angrep ${targetNames}, og de ble trukket 30 i HP.`);
+         // Venusaur sin tur til å angripe
+         let vdiv = pokemonsDivs[Math.floor(Math.random() * pokemonsDivs.length)];
+         vdiv.dataset.hp -= 30;
+         let hpElements = Array.from(vdiv.querySelectorAll("p"));
+         let hpElement = hpElements.find((p) => p.textContent.includes("hp"));
+         hpElement.textContent = `hp: ${vdiv.dataset.hp}`;
 
-        });
+         let vName = vdiv.querySelector("h2").textContent;
+         alert(`Venusaur angrep ${vName}, og den ble trukket 30 i HP.`);
+
+         // Charmander sin tur til å angripe
+         let minHp = Math.min(...pokemonsDivs.map((div) => div.dataset.hp));
+         let targetDivs = pokemonsDivs.filter(
+            (div) =>
+               div.dataset.hp == minHp &&
+               div.querySelector("h2").textContent.toLowerCase() !== "charmander"
+         );
+         targetDiv = targetDivs[Math.floor(Math.random() * targetDivs.length)];
+         targetDiv.dataset.hp -= 30;
+         hpElements = Array.from(targetDiv.querySelectorAll("p"));
+         hpElement = hpElements.find((p) => p.textContent.includes("hp"));
+         hpElement.textContent = `hp: ${targetDiv.dataset.hp}`;
+
+         let targetNames = targetDiv.querySelector("h2").textContent;
+         alert(`Charmander angrep ${targetNames}, og den ble trukket 30 i HP.`);
+
+         // Ivysaur sin tur til å angripe
+         let maxHp = Math.max(...pokemonsDivs.map((div) => div.dataset.hp));
+         targetDivs = pokemonsDivs.filter((div) => div.dataset.hp == maxHp);
+         targetDiv = targetDivs[Math.floor(Math.random() * targetDivs.length)];
+         targetDiv.dataset.hp -= 30;
+         hpElements = Array.from(targetDiv.querySelectorAll("p"));
+         hpElement = hpElements.find((p) => p.textContent.includes("hp"));
+         hpElement.textContent = `hp: ${targetDiv.dataset.hp}`;
+
+         targetNames = targetDiv.querySelector("h2").textContent;
+         alert(`Ivysaur angrep ${targetNames}, og den ble trukket 30 i HP.`);
+      });
+
       }
 
       charactersDiv.appendChild(pokemonDiv);
