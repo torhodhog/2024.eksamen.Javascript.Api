@@ -8,6 +8,12 @@ window.onload = function () {
   });
 };
 
+function checkHpAndRemoveIfZero(div) {
+   if (div.dataset.hp <= 0) {
+     div.remove();
+   }
+ }
+
 async function fetchPokemon() {
   try {
     let response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=4");
@@ -83,14 +89,19 @@ async function fetchPokemon() {
          }
 
          // Venusaur sin tur til å angripe
-         let vdiv = pokemonsDivs[Math.floor(Math.random() * pokemonsDivs.length)];
+         let vdiv;
+         do {
+           vdiv = pokemonsDivs[Math.floor(Math.random() * pokemonsDivs.length)];
+         } while (vdiv.querySelector("h2").textContent.toLowerCase() === 'venusaur');
+         
          vdiv.dataset.hp -= 30;
          let hpElements = Array.from(vdiv.querySelectorAll("p"));
          let hpElement = hpElements.find((p) => p.textContent.includes("hp"));
          hpElement.textContent = `hp: ${vdiv.dataset.hp}`;
-
+         
          let vName = vdiv.querySelector("h2").textContent;
          alert(`Venusaur angrep ${vName}, og den ble trukket 30 i HP.`);
+         checkHpAndRemoveIfZero(vdiv);
 
          // Charmander sin tur til å angripe
          let minHp = Math.min(...pokemonsDivs.map((div) => div.dataset.hp));
@@ -107,6 +118,8 @@ async function fetchPokemon() {
 
          let targetNames = targetDiv.querySelector("h2").textContent;
          alert(`Charmander angrep ${targetNames}, og den ble trukket 30 i HP.`);
+         checkHpAndRemoveIfZero(targetDiv);
+
 
          // Ivysaur sin tur til å angripe
          let maxHp = Math.max(...pokemonsDivs.map((div) => div.dataset.hp));
@@ -119,6 +132,9 @@ async function fetchPokemon() {
 
          targetNames = targetDiv.querySelector("h2").textContent;
          alert(`Ivysaur angrep ${targetNames}, og den ble trukket 30 i HP.`);
+         checkHpAndRemoveIfZero(targetDiv);
+
+         alert('Din tur til å angripe igjen! Choose wisely');
       });
 
       }
