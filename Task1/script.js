@@ -125,6 +125,7 @@ async function fetchPokemon() {
       if (newName) {
         h2.textContent = newName;
         p.textContent = newType;
+        div.style.backgroundColor = typeColors[newType]; // Endre bakgrunnsfargen basert på den nye typen
       }
     });
 

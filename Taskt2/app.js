@@ -1,30 +1,20 @@
-// Legger inn reglene for spillet.
 window.onload = function () {
   let rulesDiv = document.getElementById("rules");
   let startGameButton = document.getElementById("start-game");
 
   startGameButton.addEventListener("click", function () {
+    console.log("Game started"); // Flyttet denne linjen inn i event listeneren
     rulesDiv.style.display = "none"; // Skjuler reglene når spillet starter.
   });
-
 };
 
 function checkHpAndRemoveIfZero(div) {
    if (div.dataset.hp <= 0) {
      div.remove();
+      alert(`${div.querySelector("h2").textContent} tapte krigen!`);
    }
  }
 
-
-function restartGame() {
-   document.getElementById("restart").addEventListener("click", function () {
-      location.reload();   
-   })
-}
-
-
-
- 
 
 async function fetchPokemon() {
   try {
@@ -114,6 +104,7 @@ async function fetchPokemon() {
          let vName = vdiv.querySelector("h2").textContent;
          alert(`Venusaur angrep ${vName}, og den ble trukket 30 i HP.`);
          checkHpAndRemoveIfZero(vdiv);
+
 
          // Charmander sin tur til å angripe
          let minHp = Math.min(...pokemonsDivs.map((div) => div.dataset.hp));
