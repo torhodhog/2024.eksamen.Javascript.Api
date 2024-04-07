@@ -55,7 +55,7 @@ async function fetchPokemon() {
         "saved-pokemons-container"
       );
       let li = document.createElement("li");
-      let clone = div.cloneNode(true); // Clone the card
+      let clone = div.cloneNode(true); // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
 
       // Fjerner knappene lagre, rediger, og slett
       let buttons = clone.querySelectorAll("button");
@@ -200,15 +200,18 @@ createPokemonButton.addEventListener('click', function() {
    h2.textContent = name;
    let p = document.createElement('p');
    p.textContent = type;
+   div.dataset.types = type; // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+   
 
    // Legger til bildet og teksten til div-elementet
    div.appendChild(img);
    div.appendChild(h2);
    div.appendChild(p);
+ 
 
-   // Legger kortet inn sammen med de andre kortene
-   let container = document.getElementById('pokemon-container');
-   container.appendChild(div);
+  // Legger kortet inn sammen med de andre kortene
+  let container = document.getElementById('pokemon-container');
+  container.prepend(div); // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend
 });
 }
 
