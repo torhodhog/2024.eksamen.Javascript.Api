@@ -115,6 +115,9 @@ async function fetchPokemon() {
     //Slett knappen
     let buttonDelete = document.createElement("button");
     buttonDelete.textContent = "Slett";
+    buttonDelete.addEventListener("click", function () {
+      container.removeChild(div);
+    })
 
     //Rediger knappen
     let buttonEdit = document.createElement("button");
