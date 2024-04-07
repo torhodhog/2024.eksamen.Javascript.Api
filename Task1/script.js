@@ -94,9 +94,9 @@ async function fetchPokemon() {
         return;
       }
 
-      // Add the Pokemon to the favorites list
+      // Legger til pokemon i favorittlisten
       if (favoritesContainer.getElementsByTagName("li").length < 5) {
-        // Limit of 5 pokemons
+        // så lenge det er mindre enn 5 pokemons i listen, kan du legge til flere.
         li.appendChild(clone);
         favoritesContainer.appendChild(li);
         favoritePokemons.push({
@@ -117,6 +117,15 @@ async function fetchPokemon() {
     buttonDelete.textContent = "Slett";
     buttonDelete.addEventListener("click", function () {
       container.removeChild(div);
+
+      // Sjekk om Pokemonen også er i favorittlisten
+      let favoritePokemons = JSON.parse(localStorage.getItem("favoritePokemons")) || [];
+      let index = favoritePokemons.findIndex(pokemon => pokemon.name === h2.textContent);
+      if (index !== -1) {
+        // Fjern Pokemonen fra favorittlisten og oppdater localStorage
+        favoritePokemons.splice(index, 1);
+        localStorage.setItem("favoritePokemons", JSON.stringify(favoritePokemons));
+      }
     })
 
     //Rediger knappen
@@ -201,17 +210,38 @@ createPokemonButton.addEventListener('click', function() {
    let p = document.createElement('p');
    p.textContent = type;
    div.dataset.types = type; // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
-   
 
    // Legger til bildet og teksten til div-elementet
    div.appendChild(img);
    div.appendChild(h2);
    div.appendChild(p);
+
+   // Legger til knappene
+   let buttonSave = document.createElement("button");
+   buttonSave.textContent = "Lagre";
+   buttonSave.className = "save"; 
+  
+
+   let buttonDelete = document.createElement("button");
+   buttonDelete.textContent = "Slett";
+   
+
+   let buttonEdit = document.createElement("button");
+   buttonEdit.textContent = "Rediger";
  
+
+   div.appendChild(buttonSave);
+   div.appendChild(buttonDelete);
+   div.appendChild(buttonEdit);
 
   // Legger kortet inn sammen med de andre kortene
   let container = document.getElementById('pokemon-container');
   container.prepend(div); // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend
+
+  // Lagrer den nye Pokemonen i localStorage
+  let createdPokemons = JSON.parse(localStorage.getItem('createdPokemons')) || [];
+  createdPokemons.push({ name: name, type: type });
+  localStorage.setItem('createdPokemons', JSON.stringify(createdPokemons));
 });
 }
 
