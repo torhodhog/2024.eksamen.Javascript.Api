@@ -176,14 +176,21 @@ async function fetchPokemon() {
     select.addEventListener("change", function () {
       let selectedType = this.value;
       let allPokemonCards = document.querySelectorAll(".pokemon-card");
+      let noPokemonOfType = true;
+
       allPokemonCards.forEach((card) => {
         let cardTypes = card.dataset.types.split(", ");
         if (selectedType && !cardTypes.includes(selectedType)) {
           card.style.display = "none";
         } else {
           card.style.display = "block";
+          noPokemonOfType = false;
         }
       });
+
+      if (noPokemonOfType) {
+        alert("Ingen Pokémoner av denne typen.");
+      }
     });
   }
 
@@ -228,7 +235,30 @@ createPokemonButton.addEventListener('click', function() {
   buttonSaveCustom.textContent = "Lagre";
   buttonSaveCustom.className = "save"; 
   buttonSaveCustom.addEventListener("click", function () {
+    let favoritesContainer = document.getElementById('saved-pokemons-container');
+    let li = document.createElement('li');
+    let clone = div.cloneNode(true); // Kloner div-elementet
 
+    // Fjerner knappene lagre, rediger, og slett fra klonen
+    let buttons = clone.querySelectorAll("button");
+    buttons.forEach((button) => clone.removeChild(button));
+
+    // Legger til en fjern-knapp for å kunne ta den vekk fra listen
+    let buttonRemove = document.createElement("button");
+    buttonRemove.textContent = "Fjern";
+    buttonRemove.addEventListener("click", function () {
+      removePokemonFromFavorites(li, favoritesContainer, h2);
+    });
+    clone.appendChild(buttonRemove);
+
+    // Legger til pokemon i favorittlisten
+    li.appendChild(clone);
+    favoritesContainer.appendChild(li);
+
+    // Lagrer den nye Pokemonen i localStorage
+    let favoritePokemons = JSON.parse(localStorage.getItem('favoritePokemons')) || [];
+    favoritePokemons.push({ name: h2.textContent, type: p.textContent });
+    localStorage.setItem('favoritePokemons', JSON.stringify(favoritePokemons));
   });
 
   let buttonDeleteCustom = document.createElement("button");
