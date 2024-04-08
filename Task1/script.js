@@ -44,12 +44,13 @@ async function fetchPokemon() {
     p.textContent = pokemonTypes.join(", ");
     pokemonTypes.forEach((type) => types.add(type));
 
-    //THE BUTTONS
+    
+
+    //Knappene for lagre, rediger og slett
 
     //Lagre pokemons knappen.
     let buttonSave = document.createElement("button");
     buttonSave.textContent = "Lagre";
-    buttonSave.className = "save"; 
     buttonSave.addEventListener("click", function () {
       let favoritesContainer = document.getElementById(
         "saved-pokemons-container"
@@ -66,8 +67,6 @@ async function fetchPokemon() {
       buttonRemove.textContent = "Fjern";
       buttonRemove.addEventListener("click", function () {
         favoritesContainer.removeChild(li); // Fjerner elementet fra listen. 
-
-
 
         // Fjern-knappen fjerner også fra localStorage
         let favoritePokemons =
@@ -86,7 +85,7 @@ async function fetchPokemon() {
       clone.appendChild(buttonRemove); 
       // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Response/clone
 
-      // Her sjekker vi om det er plass til flere pokemons i listen. Mer enn 5 pokemons er ikke tillatt.
+      // Her sjekker jeg om det allerede er en pokemon med samme navn i listen og om det er  plass til flere pokemons i listen. Mer enn 5 pokemons er ikke tillatt.
       let favoritePokemons =
         JSON.parse(localStorage.getItem("favoritePokemons")) || [];
       let existingPokemon = favoritePokemons.find(
@@ -251,6 +250,19 @@ createPokemonButton.addEventListener('click', function() {
     });
     clone.appendChild(buttonRemove);
 
+    function removePokemonFromFavorites(li, favoritesContainer, h2) {
+      // Remove the item from the DOM
+      favoritesContainer.removeChild(li);
+
+      // Remove the item from local storage
+      let favoritePokemons = JSON.parse(localStorage.getItem("favoritePokemons")) || [];
+      let index = favoritePokemons.findIndex((pokemon) => pokemon.name === h2.textContent);
+      if (index !== -1) {
+        favoritePokemons.splice(index, 1);
+        localStorage.setItem("favoritePokemons", JSON.stringify(favoritePokemons));
+      }
+    }
+
     // Legger til pokemon i favorittlisten
     li.appendChild(clone);
     favoritesContainer.appendChild(li);
@@ -266,13 +278,13 @@ createPokemonButton.addEventListener('click', function() {
   buttonDeleteCustom.addEventListener("click", function () {
     container.removeChild(div);
 
-    // Sjekk om Pokemonen også er i localStorage
+    // Sjekker om Pokemonen også er i localStorage
     let createdPokemons = JSON.parse(localStorage.getItem("createdPokemons")) || [];
     let index = createdPokemons.findIndex(pokemon => pokemon.name === h2.textContent);
     if (index !== -1) {
       // Fjern Pokemonen fra localStorage og oppdater det
       createdPokemons.splice(index, 1);
-      localStorage.setItem("createdPokemons", JSON.stringify(createdPokemons));
+      localStorage.setItem("createdPokemons", JSON.stringify(createdPokemons)); // sletter også fra localStorage
     }
   });
 
@@ -292,7 +304,7 @@ createPokemonButton.addEventListener('click', function() {
   div.appendChild(buttonDeleteCustom);
   div.appendChild(buttonEditCustom);
 
-  container.prepend(div); // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend
+  container.prepend(div); // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend for å få lagt nye pokemons øverst i listen.
 
   // Lagrer den nye Pokemonen i localStorage
   let createdPokemons = JSON.parse(localStorage.getItem('createdPokemons')) || [];
@@ -302,3 +314,5 @@ createPokemonButton.addEventListener('click', function() {
 }
 
 fetchPokemon().catch((error) => console.error("Det oppstod en feil:", error));
+
+
