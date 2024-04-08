@@ -1,6 +1,6 @@
 .container {
    display: grid;
-   grid-template-columns: 1fr 3fr 1fr; /* Give more space to the middle column */
+   grid-template-columns: 1fr 3fr 1fr; 
    gap: 1rem;
    max-width: 100%;
    margin: auto; 

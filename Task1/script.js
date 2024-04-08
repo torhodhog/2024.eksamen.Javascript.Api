@@ -49,7 +49,7 @@ async function fetchPokemon() {
     //Lagre pokemons knappen.
     let buttonSave = document.createElement("button");
     buttonSave.textContent = "Lagre";
-    buttonSave.className = "save"; // Add a class to the button
+    buttonSave.className = "save"; 
     buttonSave.addEventListener("click", function () {
       let favoritesContainer = document.getElementById(
         "saved-pokemons-container"
@@ -65,7 +65,9 @@ async function fetchPokemon() {
       let buttonRemove = document.createElement("button");
       buttonRemove.textContent = "Fjern";
       buttonRemove.addEventListener("click", function () {
-        favoritesContainer.removeChild(li); // Remove the card from the favorites list
+        favoritesContainer.removeChild(li); // Fjerner elementet fra listen. 
+
+
 
         // Fjern-knappen fjerner også fra localStorage
         let favoritePokemons =
@@ -81,7 +83,8 @@ async function fetchPokemon() {
           );
         }
       });
-      clone.appendChild(buttonRemove);
+      clone.appendChild(buttonRemove); 
+      // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Response/clone
 
       // Her sjekker vi om det er plass til flere pokemons i listen. Mer enn 5 pokemons er ikke tillatt.
       let favoritePokemons =
@@ -188,54 +191,77 @@ async function fetchPokemon() {
     console.error("Det oppstod en feil:", error)
   );
 
-// Henter inn knappen fra HTML
+//LOGIKK FOR Å LAGE EGEN POKEMON
+
 let createPokemonButton = document.getElementById('create-pokemon');
 
 // Lager en eventListener som lytter etter klikk på knappen
 createPokemonButton.addEventListener('click', function() {
-   // Prompt the user for the name and type of the new Pokemon
-   let name = prompt('Skriv inn navnet på den nye Pokemonen:');
-   let type = prompt('Skriv inn typen til den nye Pokemonen:');
+  // Prompt the user for the name and type of the new Pokemon
+  let name = prompt('Skriv inn navnet på den nye Pokemonen:');
+  let type = prompt('Skriv inn typen til den nye Pokemonen:');
 
-   // Lager et nytt kort, med informasjonen som brukeren har skrevet inn
-   let div = document.createElement('div');
-   div.className = 'pokemon-card';
-   div.style.backgroundColor = typeColors[type]; // Dette setter riktig farge basert på typen som er skrevet inn.
-   let img = document.createElement('img');
-   img.src = 'assets/default-image.png'; // Laget meg en pokemon. 
-   img.style.width = '96px'; // Samme bredde som de andre
-   img.style.height = '96px'; // samme høyde som de andre
-   let h2 = document.createElement('h2');
-   h2.textContent = name;
-   let p = document.createElement('p');
-   p.textContent = type;
-   div.dataset.types = type; // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+  // Lager et nytt kort, med informasjonen som brukeren har skrevet inn
+  let div = document.createElement('div');
+  div.className = 'pokemon-card';
+  div.style.backgroundColor = typeColors[type]; // Dette setter riktig farge basert på typen som er skrevet inn.
+  let img = document.createElement('img');
+  img.src = 'assets/default-image.png'; // Laget meg en pokemon. 
+  img.style.width = '96px'; // Samme bredde som de andre
+  img.style.height = '96px'; // samme høyde som de andre
+  let h2 = document.createElement('h2');
+  h2.textContent = name;
+  let p = document.createElement('p');
+  p.textContent = type;
+  div.dataset.types = type; // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
 
-   // Legger til bildet og teksten til div-elementet
-   div.appendChild(img);
-   div.appendChild(h2);
-   div.appendChild(p);
-
-   // Legger til knappene
-   let buttonSave = document.createElement("button");
-   buttonSave.textContent = "Lagre";
-   buttonSave.className = "save"; 
-  
-
-   let buttonDelete = document.createElement("button");
-   buttonDelete.textContent = "Slett";
-   
-
-   let buttonEdit = document.createElement("button");
-   buttonEdit.textContent = "Rediger";
- 
-
-   div.appendChild(buttonSave);
-   div.appendChild(buttonDelete);
-   div.appendChild(buttonEdit);
+  // Legger til bildet og teksten til div-elementet
+  div.appendChild(img);
+  div.appendChild(h2);
+  div.appendChild(p);
 
   // Legger kortet inn sammen med de andre kortene
   let container = document.getElementById('pokemon-container');
+
+  // Legger til knappene
+  let buttonSaveCustom = document.createElement("button");
+  buttonSaveCustom.textContent = "Lagre";
+  buttonSaveCustom.className = "save"; 
+  buttonSaveCustom.addEventListener("click", function () {
+
+  });
+
+  let buttonDeleteCustom = document.createElement("button");
+  buttonDeleteCustom.textContent = "Slett";
+  buttonDeleteCustom.addEventListener("click", function () {
+    container.removeChild(div);
+
+    // Sjekk om Pokemonen også er i localStorage
+    let createdPokemons = JSON.parse(localStorage.getItem("createdPokemons")) || [];
+    let index = createdPokemons.findIndex(pokemon => pokemon.name === h2.textContent);
+    if (index !== -1) {
+      // Fjern Pokemonen fra localStorage og oppdater det
+      createdPokemons.splice(index, 1);
+      localStorage.setItem("createdPokemons", JSON.stringify(createdPokemons));
+    }
+  });
+
+  let buttonEditCustom = document.createElement("button");
+  buttonEditCustom.textContent = "Rediger";
+  buttonEditCustom.addEventListener("click", function () {
+    let newName = prompt("Skriv inn det nye navnet for Pokemonen:");
+    let newType = prompt("Skriv inn den nye typen for Pokemonen:");
+    if (newName) {
+      h2.textContent = newName;
+      p.textContent = newType;
+      div.style.backgroundColor = typeColors[newType]; // Endre bakgrunnsfargen basert på den nye typen
+    }
+  });
+
+  div.appendChild(buttonSaveCustom);
+  div.appendChild(buttonDeleteCustom);
+  div.appendChild(buttonEditCustom);
+
   container.prepend(div); // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Element/prepend
 
   // Lagrer den nye Pokemonen i localStorage
