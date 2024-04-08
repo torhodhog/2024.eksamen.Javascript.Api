@@ -30,6 +30,8 @@ async function fetchPokemon() {
          pokemonDiv.style.width = "250px"; 
          pokemonDiv.style.height = "250px"; 
          pokemonDiv.style.display = "flex"; 
+         pokemonDiv.style.flexDirection = "column";
+         pokemonDiv.style.gap = "-30px";
          pokemonDiv.style.justifyContent = "center"; 
          pokemonDiv.style.alignItems = "center"; 
  
@@ -42,14 +44,28 @@ async function fetchPokemon() {
              pokeData.name.charAt(0).toUpperCase() + pokeData.name.slice(1);
           pokemonDiv.appendChild(pokemonName);
  
-          let hpElement = document.createElement("p");
-          hpElement.textContent = `hp: 40`;
-          pokemonDiv.appendChild(hpElement);
-          pokemonDiv.dataset.hp = 40;
+          let hpElement = document.createElement("img");
+  hpElement.src = "/Task2/assets/pokeball.png";
+  hpElement.style.width = "50px";
+  pokemonDiv.appendChild(hpElement);
+  pokemonDiv.dataset.hp = 40;
+
+  if (i === 0) {
+    // For den første Pokemonen, vis tallet 40
+    let hpText = document.createTextNode("40");
+    pokemonDiv.appendChild(hpText);
+  } else {
+   let hpText = document.createTextNode("?");
+   pokemonDiv.appendChild(hpText);
+  }
+      
 
           
 
           charactersDiv.appendChild(pokemonDiv);
+          charactersDiv.style.display = "flex";
+            charactersDiv.style.justifyContent = "space-around";
+            charactersDiv.style.paddingTop = "50px";
        }
     } catch (error) {
        console.error(error);
