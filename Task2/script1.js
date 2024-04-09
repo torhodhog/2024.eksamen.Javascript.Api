@@ -73,45 +73,83 @@ async function fetchPokemon() {
       hpElement.src = "/Task2/assets/pokeball.png";
       hpElement.style.width = "50px";
       pokemonDiv.appendChild(hpElement);
+
+      let hpText = document.createElement("p"); // Nytt element for å vise antall baller
+      hpText.textContent = i === 0 ? "40" : "?"; // Vis antall baller for Bulbasaur, men vis et spørsmålstegn for de andre Pokemonene
+      pokemonDiv.appendChild(hpText);
+
       pokemonDiv.dataset.hp = 40;
-
       let betButton = document.createElement("button");
-      betButton.textContent = "Sats";
-      betButton.onclick = async function () {
-        let betAmount = prompt("Hvor mange baller vil du satse?");
-        alert(`Du har satset ${betAmount} baller. Lykke til!`);
 
-     
+      // Bare for Bulbasaur
+      if (i === 0) {
+        betButton.textContent = "Sats";
+        betButton.onclick = async function () {
+          // Spør brukeren om antall baller å satse
+          let betAmount = prompt("Hvor mange baller vil du satse?");
+          alert(`Du har satset ${betAmount} baller. Lykke til!`);
 
-        // Tilfeldig satsing for de andre Pokemonene
-        let otherBets = [
-          Math.floor(Math.random() * 41),
-          Math.floor(Math.random() * 41),
-        ];
-        alert(
-          `Du satset ${betAmount} baller, Ivysaur satset ${otherBets[0]} baller og Venusaur satset ${otherBets[1]} baller.`
-        );
+          // Tilfeldig satsing for de andre Pokemonene
+          let otherBets = [
+            Math.floor(Math.random() * 41),
+            Math.floor(Math.random() * 41),
+          ];
+          console.log(`Ivysaur satset ${otherBets[0]} baller og Venusaur satset ${otherBets[1]} baller.`); 
+          alert(
+            `Du satset ${betAmount} baller, Ivysaur satset ${otherBets[0]} baller og Venusaur satset ${otherBets[1]} baller.`
+          );
 
-        // Legg alle satsingene i en "pott"
-        let pot = parseInt(betAmount) + otherBets[0] + otherBets[1];
-        alert(`Potten er nå på ${pot} baller.`);
+          // Legg alle satsingene i en "pott"
+          let pot = parseInt(betAmount) + otherBets[0] + otherBets[1];
+          alert(`Potten er nå på ${pot} baller.`);
 
-        // Finn ut hvem som vant
-        let maxBet = Math.max(parseInt(betAmount), ...otherBets);
-        if (maxBet === parseInt(betAmount)) {
-          // Du vant
-          alert("Du vant!");
+          // Finn ut hvem som vant
+          let maxBet = Math.max(parseInt(betAmount), ...otherBets);
+          if (maxBet === parseInt(betAmount)) {
+            // Du vant
+            alert("Du vant!");
 
-          // Øk HP-verdien med antall baller i potten
-          let currentHp = parseInt(pokemonDiv.dataset.hp);
-          pokemonDiv.dataset.hp = currentHp + pot;
-          hpText.textContent = pokemonDiv.dataset.hp; // Oppdater HP-verdien på skjermen
-          alert(`Din nye HP-verdi er ${pokemonDiv.dataset.hp}.`);
-        } else {
-          // En av de andre Pokemonene vant
-          alert("En av de andre Pokemonene vant.");
-        }
-      };
+            // Øk HP-verdien med antall baller i potten
+            let currentHp = parseInt(pokemonDiv.dataset.hp);
+            let winnings = pot - parseInt(betAmount); // Trekker fra ditt eget bud fra potten
+            pokemonDiv.dataset.hp = currentHp + winnings;
+            hpText.textContent = pokemonDiv.dataset.hp; // Oppdater HP-verdien på skjermen
+            alert(`Din nye HP-verdi er ${pokemonDiv.dataset.hp}.`);
+          } else {
+            // En av de andre Pokemonene vant
+            alert("En av de andre Pokemonene vant.");
+          
+            // Trekk fra HP-verdien din med det beløpet du satset
+            let currentHp = parseInt(pokemonDiv.dataset.hp);
+            pokemonDiv.dataset.hp = currentHp - parseInt(betAmount);
+            hpText.textContent = pokemonDiv.dataset.hp; // Oppdater HP-verdien på skjermen
+            alert(`Din nye HP-verdi er ${pokemonDiv.dataset.hp}.`);
+          
+            console.log(`Etter at du tapte, har du nå ${pokemonDiv.dataset.hp} baller igjen.`); // Logg hvor mange baller du har igjen etter at du tapte
+          
+
+            // Sjekk om noen har nådd 120 baller
+            if (pokemonDiv.dataset.hp >= 120) {
+              alert(
+                `Gratulerer, ${
+                  pokeData.name.charAt(0).toUpperCase() + pokeData.name.slice(1)
+                } har vunnet spillet!`
+              );
+            }
+
+            // Sjekk om noen har nådd 0 baller
+            if (pokemonDiv.dataset.hp <= 0) {
+              alert(
+                `${
+                  pokeData.name.charAt(0).toUpperCase() + pokeData.name.slice(1)
+                } er ute av spillet.`
+              );
+              betButton.disabled = true; // Deaktiver knappen
+            }
+          }
+          pokemonDiv.appendChild(betButton);
+        };
+      }
       pokemonDiv.appendChild(betButton);
       charactersDiv.appendChild(pokemonDiv);
       charactersDiv.style.display = "flex";
