@@ -1,5 +1,5 @@
 // Spillrelaterte variabler REFERANSE:2
-let numPlayers, gender, totalPot, mainPlayerName, betAmount;
+let numPlayers, gender, totalPot, mainPlayerName, betAmount, hpText;
 
 // DOM-elementer
 let rulesDiv, backgroundImage, rulesTitle, rulesText, rulesText2;
@@ -36,6 +36,7 @@ async function fetchPokemon() {
   mainPlayerDiv.style.alignItems = "center";
   mainPlayerDiv.style.zIndex = "3";
   mainPlayerDiv.style.paddingTop = "50px";
+  mainPlayerDiv.style.marginTop = "250px";
 
   img = document.createElement("img");
   if (gender.toLowerCase() === "jente") {
@@ -52,12 +53,16 @@ async function fetchPokemon() {
 
   betButton = document.createElement("button");
   betButton.textContent = "Sats";
+  hpText = document.createElement("p");
+  hpText.textContent = 40;
   mainPlayerDiv.appendChild(betButton);
+  mainPlayerDiv.appendChild(hpText);
   charactersDiv.appendChild(mainPlayerDiv);
 
   betButton.onclick = function () {
     betAmount = prompt("Hvor mange baller vil du satse?");
 
+  
     // Valider innsatsen
     if (betAmount < 1 || betAmount > playerBalls) {
       alert(
@@ -71,11 +76,14 @@ async function fetchPokemon() {
     // Oppdater currentBet og spillerens antall baller
     currentBet = betAmount;
     playerBalls -= betAmount;
-    currentAmount = playerBalls;
+    hpText.textContent = playerBalls;
+
+    if(playerBalls === 0) {
+      gameOver();
+    }
 
     // Oppdater visningen av totalpotten og currentBet
-    potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${currentAmount} baller igjen.`;
-
+    potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${playerBalls} baller igjen.`;    
     // Generer en tilfeldig innsats for hver av de andre spillerne og oppdater HP-teksten deres
     let otherPlayers = document.querySelectorAll(".pokemon:not(:first-child)");
     otherPlayers.forEach((player) => {
@@ -133,14 +141,16 @@ async function fetchPokemon() {
 
     deliverPotButton.onclick = function () {
       // Finn spilleren med den høyeste innsatsen
+      let allPlayers = document.querySelectorAll(".pokemon");
+
+      // Find the player with the highest bet
       let highestBet = Math.max(
-        ...Array.from(otherPlayers, (player) =>
+        ...Array.from(allPlayers, (player) =>
           Number(player.querySelector("p").textContent)
-        ),
-        currentBet // Her legger jeg min egen innsats inn i arrayet, sånn at også jeg kan vinne potten. 
+        )
       );
-      
-      let highestBettingPlayer = Array.from(otherPlayers).find(
+    
+      let highestBettingPlayer = Array.from(allPlayers).find(
         (player) => Number(player.querySelector("p").textContent) === highestBet
       );
 
@@ -151,6 +161,13 @@ async function fetchPokemon() {
       let winnerCurrentHP = Number(highestBettingPlayer.querySelector('p').textContent);
       let winnerNewHP = winnerCurrentHP + totalBet - highestBet;
       highestBettingPlayer.querySelector('p').textContent = winnerNewHP;
+
+      if (highestBettingPlayer === mainPlayerDiv) {
+        playerBalls = winnerNewHP;
+        hpText.textContent = playerBalls;
+      }
+
+      
 
       // Vis en melding som sier at potten blir levert til spilleren med den høyeste innsatsen
       alert(
@@ -168,9 +185,38 @@ async function fetchPokemon() {
   };
 
   // Sjekk om spillet er over
-  if (playerBalls === 0) {
-    alert("Du har ingen baller igjen, spillet er over!");
+  
+  function gameOver() {
+    // Opprett et videoelement
+    let loseVideo = document.createElement('video');
+    loseVideo.src = 'Task2/assets/losethebattle.mp4';
+    loseVideo.style.width = '100%';
+    loseVideo.style.height = '100%';
+    loseVideo.style.autoplay = true;
+    document.body.appendChild(loseVideo);
+
+    // Opprett en "Prøv igjen" knapp
+    let retryButton = document.createElement('button');
+    retryButton.textContent = 'Prøv igjen';
+    retryButton.style.display = 'none'; // Skjul knappen til videoen er ferdig
+    document.body.appendChild(retryButton);
+
+    // Legg til en event listener for 'ended' event på videoen
+    loseVideo.addEventListener('ended', function () {
+      // Når videoen er ferdig, vis "Prøv igjen" knappen
+      retryButton.style.display = 'block';
+    });
+
+    // Legg til en onclick event til "Prøv igjen" knappen for å oppdatere siden
+    retryButton.onclick = function () {
+      location.reload();
+    };
+
+    // Spill videoen
+    loseVideo.play();
   }
+
+
   // Legg til elementer i DOM
   document.body.appendChild(charactersDiv);
   mainPlayerDiv.appendChild(img);
@@ -203,6 +249,7 @@ function createPokemonDiv(pokemonData, i) {
   pokemonDiv.style.gap = "-30px";
   pokemonDiv.style.justifyContent = "center";
   pokemonDiv.style.alignItems = "center";
+  pokemonDiv.style.marginTop = "250px";
 
   let img = document.createElement("img");
   img.src = pokemonData.sprites.front_default;
@@ -268,7 +315,7 @@ window.onload = async function () {
 
   rulesText2 = document.createElement("p");
   rulesText2.textContent =
-    "Du har 40 HP og motstanderne har 40 HP. Alle satser et fritt antall pokeballer hver runde. Den som satser mest vinner runden og får ballene som ligger i potten. Den som sitter igjen med alle ballene, vinner spillet.";
+    "Alle spillere har 40HP (Pokemonballer). Alle satser et fritt antall pokeballer hver runde. Den som satser mest vinner runden og får ballene som ligger i potten. Klarer du å vinne alle ballene? Lykke til!";
   rulesDiv.appendChild(rulesText2);
 
   document.body.appendChild(rulesDiv);
@@ -284,5 +331,14 @@ REFERANSER:
 1. AI - Hjelp med totalBet. Da jeg skulle finne summen av alle innsatsene til spillerne, og legge til min egen innsats fikk jeg problemer   ved at jeg ikke fikk lagt til min egen innsats. AI hjalp meg med å legge til min egen innsats i arrayet.
 2. Bok - Koding for alle i JavaScript, av Terje Kolderup
 3.
+
+*/
+
+/* 
+MANGLER I KODEN:
+
+- Jeg finner ikke ut av hvorfor du blir promptet om å skrive inn antall spillere og kjønn to ganger.Dette er en bug jeg ville brukt mer tid på å fikse, hadde det ikke vært for tidsfristen.
+
+- Rent praktisk ville jeg også lagt til at spillbrett og regler dukket opp før promptene. Da hadde det vært lettere å vite hva man faktisk svarte på og hvorfor. 
 
 */
