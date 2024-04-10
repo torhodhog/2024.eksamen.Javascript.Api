@@ -62,7 +62,7 @@ async function fetchPokemon() {
   betButton.onclick = function () {
     betAmount = prompt("Hvor mange baller vil du satse?");
 
-    // Valider innsatsen
+    // Du må satse mellom 1 og det antall baller du har igjen  i din pott. 
     if (betAmount < 1 || betAmount > playerBalls) {
       alert(
         "Ugyldig innsats. Du må satse mellom 1 og " + playerBalls + " baller."
@@ -125,7 +125,6 @@ async function fetchPokemon() {
       deliverPotButton.style.display = "block";
       // Sjekk om spillet er over
       if(playerBalls === 0 && highestBettingPlayer !== mainPlayerDiv) {
-         console.log('Calling gameOver function');
          gameOver();
       }
 
@@ -145,7 +144,7 @@ async function fetchPokemon() {
       // Finn spilleren med den høyeste innsatsen
       let allPlayers = document.querySelectorAll(".pokemon");
 
-      // Find the player with the highest bet
+      // Find the player with the highest bet //REFERANSE: 3
       let highestBet = Math.max(
         ...Array.from(allPlayers, (player) =>
           Number(player.querySelector("p").textContent)
@@ -190,7 +189,6 @@ async function fetchPokemon() {
   // Sjekk om spillet er over
 
   function gameOver() {
-    console.log('gameOver function called');
     let loseVideo = document.createElement("video");
     loseVideo.src = "assets/losethebattle.mp4";
     loseVideo.style.width = "400px";
@@ -202,7 +200,7 @@ async function fetchPokemon() {
     loseVideo.autoplay = true;
     document.body.appendChild(loseVideo);
 
-    // Opprett en "Prøv igjen" knapp
+    // Oppretter en "Prøv igjen" knapp
     let retryButton = document.createElement("button");
     retryButton.textContent = "Prøv igjen";
     retryButton.style.display = "none"; // Skjul knappen til videoen er ferdig
@@ -336,7 +334,7 @@ REFERANSER:
 
 1. AI - Hjelp med totalBet. Da jeg skulle finne summen av alle innsatsene til spillerne, og legge til min egen innsats fikk jeg problemer   ved at jeg ikke fikk lagt til min egen innsats. AI hjalp meg med å legge til min egen innsats i arrayet.
 2. Bok - Koding for alle i JavaScript, av Terje Kolderup
-3.
+3. Spred operator - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
 
 */
 
