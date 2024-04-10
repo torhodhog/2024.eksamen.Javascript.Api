@@ -1,14 +1,20 @@
 // Spillrelaterte variabler
-let numPlayers, gender, totalPot, mainPlayerName;
+let numPlayers, gender, totalPot, mainPlayerName, betAmount;
 
 // DOM-elementer
 let rulesDiv, backgroundImage, rulesTitle, rulesText, rulesText2;
-let charactersDiv, mainPlayerDiv, playerImage, img, betButton;
+let charactersDiv,
+  mainPlayerDiv,
+  playerImage,
+  img,
+  betButton,
+  potDiv,
+  currentBet,
+  currentAmount,
+  deliverPotButton;
 
 // FUNKSJONER
 async function fetchPokemon() {
-  
-
   charactersDiv = document.createElement("div");
   charactersDiv.id = "characters";
   charactersDiv.style.position = "relative";
@@ -49,6 +55,114 @@ async function fetchPokemon() {
   mainPlayerDiv.appendChild(betButton);
   charactersDiv.appendChild(mainPlayerDiv);
 
+  betButton.onclick = function () {
+    betAmount = prompt("Hvor mange baller vil du satse?");
+
+    // Valider innsatsen
+    if (betAmount < 1 || betAmount > playerBalls) {
+      alert(
+        "Ugyldig innsats. Du må satse mellom 1 og " + playerBalls + " baller."
+      );
+      return;
+    }
+
+    betAmount = Number(betAmount);
+
+    // Oppdater currentBet og spillerens antall baller
+    currentBet = betAmount;
+    playerBalls -= betAmount;
+    currentAmount = playerBalls;
+
+    // Oppdater visningen av totalpotten og currentBet
+    potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${currentAmount} baller igjen.`;
+
+    // Generer en tilfeldig innsats for hver av de andre spillerne og oppdater HP-teksten deres
+    let otherPlayers = document.querySelectorAll(".pokemon:not(:first-child)");
+    otherPlayers.forEach((player) => {
+      let bet = Math.floor(Math.random() * 40) + 1; // Generer en tilfeldig innsats mellom 1 og 40
+      let hpText = player.querySelector("p");
+      hpText.textContent = bet;
+    });
+
+    deliverPotButton = document.createElement("button");
+    deliverPotButton.textContent = "Lever potten";
+    deliverPotButton.style.display = "none";
+    deliverPotButton.style.position = "fixed";
+    deliverPotButton.style.zIndex = "999";
+    deliverPotButton.style.bottom = "300px";
+    deliverPotButton.style.right = "500px";
+    document.body.appendChild(deliverPotButton);
+
+    let newRoundButton = document.createElement("button");
+    newRoundButton.textContent = "Ny runde";
+    newRoundButton.style.display = "none"; // Skjul knappen til å begynne med
+    newRoundButton.style.position = "fixed";
+    newRoundButton.style.zIndex = "999";
+    newRoundButton.style.bottom = "200px";
+    newRoundButton.style.right = "500px";
+    document.body.appendChild(newRoundButton);
+
+
+    // Funksjon for å tilbakestille innsatsene. Brukes når en runde er ferdig, at du først leverer potten til spillerne, før du kan starte en ny runde.
+
+    newRoundButton.onclick = function () {
+      // Skjul newRoundButton og vis deliverPotButton
+      newRoundButton.style.display = "none";
+      deliverPotButton.style.display = "block";
+
+      // Start en ny runde ved å tilbakestille innsatsene
+      otherPlayers.forEach(player => {
+        player.querySelector('p').textContent = "?";
+      });
+      currentBet = 0;
+
+      // Vis "Sats" knappen igjen
+      betButton.style.display = "block";
+    };
+
+    deliverPotButton.style.display = "block";
+    
+
+    deliverPotButton.onclick = function () {
+      // Finn spilleren med den høyeste innsatsen
+      let highestBet = Math.max(
+        ...Array.from(otherPlayers, (player) =>
+          Number(player.querySelector("p").textContent)
+        ),
+        currentBet // Her legger jeg min egen innsats inn i arrayet, sånn at også jeg kan vinne potten. 
+      );
+      
+      let highestBettingPlayer = Array.from(otherPlayers).find(
+        (player) => Number(player.querySelector("p").textContent) === highestBet
+      );
+
+      // Her har jeg fått hjelp med totalBet. Referanse 1. 
+      let totalBet = Array.from(otherPlayers, player => Number(player.querySelector('p').textContent)).reduce((a, b) => a + b, 0) + currentBet;
+
+      // Oppdater HP-verdien til vinneren
+      let winnerCurrentHP = Number(highestBettingPlayer.querySelector('p').textContent);
+      let winnerNewHP = winnerCurrentHP + totalBet - highestBet;
+      highestBettingPlayer.querySelector('p').textContent = winnerNewHP;
+
+      // Vis en melding som sier at potten blir levert til spilleren med den høyeste innsatsen
+      alert(
+        `Lever potten på ${totalBet} til ${
+          highestBettingPlayer.querySelector("h2").textContent
+        }`
+      );
+
+      // Skjul deliverPotButton og start neste runde. 
+      deliverPotButton.style.display = "none";
+      newRoundButton.style.display = "block";
+
+      
+    };
+  };
+
+  // Sjekk om spillet er over
+  if (playerBalls === 0) {
+    alert("Du har ingen baller igjen, spillet er over!");
+  }
   // Legg til elementer i DOM
   document.body.appendChild(charactersDiv);
   mainPlayerDiv.appendChild(img);
@@ -95,7 +209,6 @@ function createPokemonDiv(pokemonData, i) {
   hpElement.src = "/Task2/assets/pokeball.png";
   hpElement.style.width = "50px";
   pokemonDiv.appendChild(hpElement);
-  
 
   let hpText = document.createElement("p");
   hpText.textContent = pokemonData.name === mainPlayerName ? "40" : "?";
@@ -109,17 +222,16 @@ function createPokemonDiv(pokemonData, i) {
 function getGameSettings() {
   numPlayers = prompt("Hvor mange spillere vil du utfordre?");
   gender = prompt("Vil du være en jente eller en gutt?");
-  totalPot = numPlayers * 40; // Initialiser totalPot med det totale antallet baller
+  totalPot = numPlayers * 40 + 40; //  TotalPot med det totale antallet baller, plusser på 40 for å inkludere mainPlayer, noe som gjør at totalPot er 40 mer enn antall motspillere.
+  playerBalls = 40; //  Antall baller spilleren har ved oppstart.
 
-  let potDiv = document.createElement("div");
-  potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}.`;
+  potDiv = document.createElement("div");
+  potDiv.textContent = `Det er ${numPlayers} motstandere med, og totalpotten er ${totalPot}.`;
   document.body.appendChild(potDiv);
 }
 
-
 window.onload = async function () {
   getGameSettings();
-
 
   backgroundImage = document.createElement("img");
   backgroundImage.src = "/task2/assets/pokebattle.png";
