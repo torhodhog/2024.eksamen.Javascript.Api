@@ -1,3 +1,4 @@
+window.onload = function () {
 //Her fikk jeg hjelp av min venn internett til å finne passende farger for typene Pokemons.
 const typeColors = {
   normal: "#A8A77A",
@@ -84,6 +85,8 @@ async function fetchPokemon() {
       });
       clone.appendChild(buttonRemove); 
       // REFERANSE https://developer.mozilla.org/en-US/docs/Web/API/Response/clone
+
+      
 
       // Her sjekker jeg om det allerede er en pokemon med samme navn i listen og om det er  plass til flere pokemons i listen. Mer enn 5 pokemons er ikke tillatt.
       let favoritePokemons =
@@ -295,7 +298,7 @@ createPokemonButton.addEventListener('click', function() {
     let newType = prompt("Skriv inn den nye typen for Pokemonen:");
     if (newName) {
       h2.textContent = newName;
-      p.textContent = newType;
+      p.textContent = newType.toLowerCase;
       div.style.backgroundColor = typeColors[newType]; // Endre bakgrunnsfargen basert på den nye typen
     }
   });
@@ -313,6 +316,43 @@ createPokemonButton.addEventListener('click', function() {
 });
 }
 
+
+  // Hent ut de lagrede pokemonene fra localStorage
+  let favoritePokemons = JSON.parse(localStorage.getItem('favoritePokemons')) || [];
+
+  // Finn containeren hvor pokemonene skal vises
+  let favoritesContainer = document.getElementById('saved-pokemons-container');
+
+  // Gå gjennom de lagrede pokemonene og vis dem i front-end
+  for (let pokemon of favoritePokemons) {
+    let div = document.createElement("div");
+    div.className = "pokemon-card";
+    div.style.backgroundColor = typeColors[pokemon.type];
+    let h2 = document.createElement("h2");
+    h2.textContent = pokemon.name;
+    let p = document.createElement("p");
+    p.textContent = pokemon.type;
+
+    // Legger til en fjern-knapp for å kunne ta den vekk fra listen
+    let buttonRemove = document.createElement("button");
+    buttonRemove.textContent = "Fjern";
+    buttonRemove.addEventListener("click", function () {
+      favoritesContainer.removeChild(div);
+
+      let index = favoritePokemons.findIndex(favPokemon => favPokemon.name === pokemon.name);
+      if (index !== -1) {
+        favoritePokemons.splice(index, 1);
+        localStorage.setItem('favoritePokemons', JSON.stringify(favoritePokemons));
+      }
+    });
+
+    div.appendChild(h2);
+    div.appendChild(p);
+    div.appendChild(buttonRemove);
+    favoritesContainer.appendChild(div);
+  }
+
+
 fetchPokemon().catch((error) => console.error("Det oppstod en feil:", error));
 
-
+}

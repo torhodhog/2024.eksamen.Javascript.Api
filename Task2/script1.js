@@ -80,6 +80,7 @@ async function fetchPokemon() {
     if (playerBalls === 0) {
       gameOver();
     }
+    
 
     // Oppdater visningen av totalpotten og currentBet
     potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${playerBalls} baller igjen.`;
@@ -187,6 +188,10 @@ async function fetchPokemon() {
   };
 
   // Sjekk om spillet er over
+
+  function winner(){
+    alert("Gratulerer! Du vant spillet!")
+  }
 
   function gameOver() {
     let loseVideo = document.createElement("video");
