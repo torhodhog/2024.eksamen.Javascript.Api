@@ -1,4 +1,4 @@
-// Spillrelaterte variabler
+// Spillrelaterte variabler REFERANSE:2
 let numPlayers, gender, totalPot, mainPlayerName, betAmount;
 
 // DOM-elementer
@@ -144,7 +144,7 @@ async function fetchPokemon() {
         (player) => Number(player.querySelector("p").textContent) === highestBet
       );
 
-      // Her har jeg fått hjelp med totalBet. Referanse 1. 
+      // Her har jeg fått hjelp med totalBet. REFERANSE: 1
       let totalBet = Array.from(otherPlayers, player => Number(player.querySelector('p').textContent)).reduce((a, b) => a + b, 0) + currentBet;
 
       // Oppdater HP-verdien til vinneren
@@ -276,3 +276,13 @@ window.onload = async function () {
   await fetchPokemon();
   console.log("fetchPokemon() kjørt");
 };
+
+
+/*
+REFERANSER:
+
+1. AI - Hjelp med totalBet. Da jeg skulle finne summen av alle innsatsene til spillerne, og legge til min egen innsats fikk jeg problemer   ved at jeg ikke fikk lagt til min egen innsats. AI hjalp meg med å legge til min egen innsats i arrayet.
+2. Bok - Koding for alle i JavaScript, av Terje Kolderup
+3.
+
+*/
