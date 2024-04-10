@@ -62,7 +62,6 @@ async function fetchPokemon() {
   betButton.onclick = function () {
     betAmount = prompt("Hvor mange baller vil du satse?");
 
-  
     // Valider innsatsen
     if (betAmount < 1 || betAmount > playerBalls) {
       alert(
@@ -78,16 +77,16 @@ async function fetchPokemon() {
     playerBalls -= betAmount;
     hpText.textContent = playerBalls;
 
-    if(playerBalls === 0) {
+    if (playerBalls === 0) {
       gameOver();
     }
 
     // Oppdater visningen av totalpotten og currentBet
-    potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${playerBalls} baller igjen.`;    
+    potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${playerBalls} baller igjen.`;
     // Generer en tilfeldig innsats for hver av de andre spillerne og oppdater HP-teksten deres
     let otherPlayers = document.querySelectorAll(".pokemon:not(:first-child)");
     otherPlayers.forEach((player) => {
-      let bet = Math.floor(Math.random() * 40) + 1; // Generer en tilfeldig innsats mellom 1 og 40
+      let bet = Math.floor(Math.random() * 30) + 1; // Generer en tilfeldig innsats mellom 1 og 40
       let hpText = player.querySelector("p");
       hpText.textContent = bet;
     });
@@ -118,17 +117,21 @@ async function fetchPokemon() {
     newRoundButton.style.color = "white";
     document.body.appendChild(newRoundButton);
 
-
     // Funksjon for å tilbakestille innsatsene. Brukes når en runde er ferdig, at du først leverer potten til spillerne, før du kan starte en ny runde.
 
     newRoundButton.onclick = function () {
       // Skjul newRoundButton og vis deliverPotButton
       newRoundButton.style.display = "none";
       deliverPotButton.style.display = "block";
+      // Sjekk om spillet er over
+      if(playerBalls === 0 && highestBettingPlayer !== mainPlayerDiv) {
+         console.log('Calling gameOver function');
+         gameOver();
+      }
 
       // Start en ny runde ved å tilbakestille innsatsene
-      otherPlayers.forEach(player => {
-        player.querySelector('p').textContent = "?";
+      otherPlayers.forEach((player) => {
+        player.querySelector("p").textContent = "?";
       });
       currentBet = 0;
 
@@ -137,7 +140,6 @@ async function fetchPokemon() {
     };
 
     deliverPotButton.style.display = "block";
-    
 
     deliverPotButton.onclick = function () {
       // Finn spilleren med den høyeste innsatsen
@@ -149,25 +151,28 @@ async function fetchPokemon() {
           Number(player.querySelector("p").textContent)
         )
       );
-    
+
       let highestBettingPlayer = Array.from(allPlayers).find(
         (player) => Number(player.querySelector("p").textContent) === highestBet
       );
 
       // Her har jeg fått hjelp med totalBet. REFERANSE: 1
-      let totalBet = Array.from(otherPlayers, player => Number(player.querySelector('p').textContent)).reduce((a, b) => a + b, 0) + currentBet;
+      let totalBet =
+        Array.from(otherPlayers, (player) =>
+          Number(player.querySelector("p").textContent)
+        ).reduce((a, b) => a + b, 0) + currentBet;
 
       // Oppdater HP-verdien til vinneren
-      let winnerCurrentHP = Number(highestBettingPlayer.querySelector('p').textContent);
+      let winnerCurrentHP = Number(
+        highestBettingPlayer.querySelector("p").textContent
+      );
       let winnerNewHP = winnerCurrentHP + totalBet - highestBet;
-      highestBettingPlayer.querySelector('p').textContent = winnerNewHP;
+      highestBettingPlayer.querySelector("p").textContent = winnerNewHP;
 
       if (highestBettingPlayer === mainPlayerDiv) {
         playerBalls = winnerNewHP;
         hpText.textContent = playerBalls;
       }
-
-      
 
       // Vis en melding som sier at potten blir levert til spilleren med den høyeste innsatsen
       alert(
@@ -176,35 +181,38 @@ async function fetchPokemon() {
         }`
       );
 
-      // Skjul deliverPotButton og start neste runde. 
+      // Skjul deliverPotButton og start neste runde.
       deliverPotButton.style.display = "none";
       newRoundButton.style.display = "block";
-
-      
     };
   };
 
   // Sjekk om spillet er over
-  
+
   function gameOver() {
-    // Opprett et videoelement
-    let loseVideo = document.createElement('video');
-    loseVideo.src = 'Task2/assets/losethebattle.mp4';
-    loseVideo.style.width = '100%';
-    loseVideo.style.height = '100%';
-    loseVideo.style.autoplay = true;
+    console.log('gameOver function called');
+    let loseVideo = document.createElement("video");
+    loseVideo.src = "assets/losethebattle.mp4";
+    loseVideo.style.width = "400px";
+    loseVideo.style.height = "400px";
+    loseVideo.style.position = "fixed";
+    loseVideo.style.left = "40%";
+    loseVideo.style.top = "40%";
+    loseVideo.style.zIndex = "1000";
+    loseVideo.autoplay = true;
     document.body.appendChild(loseVideo);
 
     // Opprett en "Prøv igjen" knapp
-    let retryButton = document.createElement('button');
-    retryButton.textContent = 'Prøv igjen';
-    retryButton.style.display = 'none'; // Skjul knappen til videoen er ferdig
+    let retryButton = document.createElement("button");
+    retryButton.textContent = "Prøv igjen";
+    retryButton.style.display = "none"; // Skjul knappen til videoen er ferdig
     document.body.appendChild(retryButton);
 
     // Legg til en event listener for 'ended' event på videoen
-    loseVideo.addEventListener('ended', function () {
+    loseVideo.addEventListener("ended", function () {
       // Når videoen er ferdig, vis "Prøv igjen" knappen
-      retryButton.style.display = 'block';
+      retryButton.style.display = "block";
+      document.body.removeChild(loseVideo);
     });
 
     // Legg til en onclick event til "Prøv igjen" knappen for å oppdatere siden
@@ -215,7 +223,6 @@ async function fetchPokemon() {
     // Spill videoen
     loseVideo.play();
   }
-
 
   // Legg til elementer i DOM
   document.body.appendChild(charactersDiv);
@@ -323,7 +330,6 @@ window.onload = async function () {
   await fetchPokemon();
   console.log("fetchPokemon() kjørt");
 };
-
 
 /*
 REFERANSER:
