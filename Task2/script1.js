@@ -89,8 +89,12 @@ async function fetchPokemon() {
     deliverPotButton.style.display = "none";
     deliverPotButton.style.position = "fixed";
     deliverPotButton.style.zIndex = "999";
-    deliverPotButton.style.bottom = "300px";
-    deliverPotButton.style.right = "500px";
+    deliverPotButton.style.bottom = "500px";
+    deliverPotButton.style.right = "700px";
+    deliverPotButton.style.backgroundColor = "Blue";
+    deliverPotButton.style.width = "200px";
+    deliverPotButton.style.height = "200px";
+    deliverPotButton.style.color = "white";
     document.body.appendChild(deliverPotButton);
 
     let newRoundButton = document.createElement("button");
@@ -98,8 +102,12 @@ async function fetchPokemon() {
     newRoundButton.style.display = "none"; // Skjul knappen til å begynne med
     newRoundButton.style.position = "fixed";
     newRoundButton.style.zIndex = "999";
-    newRoundButton.style.bottom = "200px";
-    newRoundButton.style.right = "500px";
+    newRoundButton.style.bottom = "500px";
+    newRoundButton.style.right = "700px";
+    newRoundButton.style.backgroundColor = "green";
+    newRoundButton.style.width = "200px";
+    newRoundButton.style.height = "200px";
+    newRoundButton.style.color = "white";
     document.body.appendChild(newRoundButton);
 
 
