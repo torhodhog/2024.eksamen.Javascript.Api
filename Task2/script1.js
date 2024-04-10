@@ -60,7 +60,7 @@ async function fetchPokemon() {
   );
   let data = await response.json();
 
-  // Loop gjennom resultatene og hent inn data for hver Pokemon
+  // Looper gjennom resultatene og hent inn data for hver Pokemon
   for (let i = 0; i < data.results.length; i++) {
     let pokemonDataResponse = await fetch(data.results[i].url);
     let pokemonData = await pokemonDataResponse.json();
@@ -95,6 +95,7 @@ function createPokemonDiv(pokemonData, i) {
   hpElement.src = "/Task2/assets/pokeball.png";
   hpElement.style.width = "50px";
   pokemonDiv.appendChild(hpElement);
+  
 
   let hpText = document.createElement("p");
   hpText.textContent = pokemonData.name === mainPlayerName ? "40" : "?";
@@ -104,11 +105,17 @@ function createPokemonDiv(pokemonData, i) {
 
   return pokemonDiv;
 }
+
 function getGameSettings() {
-  numPlayers = prompt("Hvor mange spillere vil du skal spille mot hverandre?");
+  numPlayers = prompt("Hvor mange spillere vil du utfordre?");
   gender = prompt("Vil du være en jente eller en gutt?");
   totalPot = numPlayers * 40; // Initialiser totalPot med det totale antallet baller
+
+  let potDiv = document.createElement("div");
+  potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}.`;
+  document.body.appendChild(potDiv);
 }
+
 
 window.onload = async function () {
   getGameSettings();
@@ -136,12 +143,12 @@ window.onload = async function () {
 
   rulesText = document.createElement("p");
   rulesText.textContent =
-    "I dette spillet skal du logisk krige mot Ivysaur og Venusaur!";
+    "I dette spillet skal du drive logisk krigføring mot en motstander som prøver å stjele dine pokeballer!";
   rulesDiv.appendChild(rulesText);
 
   rulesText2 = document.createElement("p");
   rulesText2.textContent =
-    "Du har 40 HP og motstanderne har 40 HP. Dere satser et fritt antall pokeballer hver runde. Den som satser mest vinner runden og får ballene som ligger i potten. Den som sitter igjen med alle ballene, vinner spillet.";
+    "Du har 40 HP og motstanderne har 40 HP. Alle satser et fritt antall pokeballer hver runde. Den som satser mest vinner runden og får ballene som ligger i potten. Den som sitter igjen med alle ballene, vinner spillet.";
   rulesDiv.appendChild(rulesText2);
 
   document.body.appendChild(rulesDiv);
