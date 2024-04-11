@@ -11,7 +11,8 @@ let charactersDiv,
   potDiv,
   currentBet,
   currentAmount,
-  deliverPotButton;
+  deliverPotButton,
+  highestBettingPlayer;
 
 // FUNKSJONER
 async function fetchPokemon() {
@@ -62,7 +63,6 @@ async function fetchPokemon() {
   betButton.onclick = function () {
     betAmount = prompt("Hvor mange baller vil du satse?");
 
-    // Du må satse mellom 1 og det antall baller du har igjen  i din pott. 
     if (betAmount < 1 || betAmount > playerBalls) {
       alert(
         "Ugyldig innsats. Du må satse mellom 1 og " + playerBalls + " baller."
@@ -72,7 +72,6 @@ async function fetchPokemon() {
 
     betAmount = Number(betAmount);
 
-    // Oppdater currentBet og spillerens antall baller
     currentBet = betAmount;
     playerBalls -= betAmount;
     hpText.textContent = playerBalls;
@@ -80,53 +79,54 @@ async function fetchPokemon() {
     if (playerBalls === 0) {
       gameOver();
     }
-    
 
     // Oppdater visningen av totalpotten og currentBet
     potDiv.textContent = `Det er ${numPlayers} spillere med, og totalpotten er ${totalPot}. Innsatsen din denne runden er ${currentBet}. Du har nå ${playerBalls} baller igjen.`;
     // Generer en tilfeldig innsats for hver av de andre spillerne og oppdater HP-teksten deres
     let otherPlayers = document.querySelectorAll(".pokemon:not(:first-child)");
     otherPlayers.forEach((player) => {
-      let bet = Math.floor(Math.random() * 30) + 1; // Generer en tilfeldig innsats mellom 1 og 40
+      let bet = Math.floor(Math.random() * 30) + 1; 
       let hpText = player.querySelector("p");
       hpText.textContent = bet;
     });
 
-    deliverPotButton = document.createElement("button");
-    deliverPotButton.textContent = "Lever potten";
-    deliverPotButton.style.display = "none";
-    deliverPotButton.style.position = "fixed";
-    deliverPotButton.style.zIndex = "999";
-    deliverPotButton.style.bottom = "500px";
-    deliverPotButton.style.right = "700px";
-    deliverPotButton.style.backgroundColor = "Blue";
-    deliverPotButton.style.width = "200px";
-    deliverPotButton.style.height = "200px";
-    deliverPotButton.style.color = "white";
-    document.body.appendChild(deliverPotButton);
+  let allPlayers = document.querySelectorAll(".pokemon");
+  let highestBet = Math.max(
+    ...Array.from(allPlayers, (player) =>
+      Number(player.querySelector("p").textContent)
+    )
+  );
+  highestBettingPlayer = Array.from(allPlayers).find(
+    (player) => Number(player.querySelector("p").textContent) === highestBet
+  );
 
-    let newRoundButton = document.createElement("button");
-    newRoundButton.textContent = "Ny runde";
-    newRoundButton.style.display = "none"; // Skjul knappen til å begynne med
-    newRoundButton.style.position = "fixed";
-    newRoundButton.style.zIndex = "999";
-    newRoundButton.style.bottom = "500px";
-    newRoundButton.style.right = "700px";
-    newRoundButton.style.backgroundColor = "green";
-    newRoundButton.style.width = "200px";
-    newRoundButton.style.height = "200px";
-    newRoundButton.style.color = "white";
-    document.body.appendChild(newRoundButton);
+  function createButton(text, backgroundColor) {
+    let button = document.createElement("button");
+    button.textContent = text;
+    button.style.display = "none";
+    button.style.position = "fixed";
+    button.style.zIndex = "999";
+    button.style.bottom = "500px";
+    button.style.right = "700px";
+    button.style.backgroundColor = backgroundColor;
+    button.style.width = "200px";
+    button.style.height = "200px";
+    button.style.color = "white";
+    document.body.appendChild(button);
+    return button;
+}
 
-    // Funksjon for å tilbakestille innsatsene. Brukes når en runde er ferdig, at du først leverer potten til spillerne, før du kan starte en ny runde.
+let deliverPotButton = createButton("Lever potten", "blue");
+let newRoundButton = createButton("Ny runde", "green");
+
 
     newRoundButton.onclick = function () {
       // Skjul newRoundButton og vis deliverPotButton
       newRoundButton.style.display = "none";
       deliverPotButton.style.display = "block";
-      // Sjekk om spillet er over
-      if(playerBalls === 0 && highestBettingPlayer !== mainPlayerDiv) {
-         gameOver();
+      // Sjekk om spillet er over.  
+      if (playerBalls === 0 && highestBettingPlayer !== mainPlayerDiv) {
+        gameOver();
       }
 
       // Start en ny runde ved å tilbakestille innsatsene
@@ -145,7 +145,7 @@ async function fetchPokemon() {
       // Finn spilleren med den høyeste innsatsen
       let allPlayers = document.querySelectorAll(".pokemon");
 
-      // Find the player with the highest bet //REFERANSE: 3
+      // Finn spilleren med høyest poengsum //REFERANSE: 3
       let highestBet = Math.max(
         ...Array.from(allPlayers, (player) =>
           Number(player.querySelector("p").textContent)
@@ -154,7 +154,10 @@ async function fetchPokemon() {
 
       let highestBettingPlayer = Array.from(allPlayers).find(
         (player) => Number(player.querySelector("p").textContent) === highestBet
-      );
+      );    
+      
+      console.log('highestBettingPlayer:', highestBettingPlayer); // Legg til denne linjen
+
 
       // Her har jeg fått hjelp med totalBet. REFERANSE: 1
       let totalBet =
@@ -169,11 +172,11 @@ async function fetchPokemon() {
       let winnerNewHP = winnerCurrentHP + totalBet - highestBet;
       highestBettingPlayer.querySelector("p").textContent = winnerNewHP;
 
+   
       if (highestBettingPlayer === mainPlayerDiv) {
         playerBalls = winnerNewHP;
         hpText.textContent = playerBalls;
       }
-
       // Vis en melding som sier at potten blir levert til spilleren med den høyeste innsatsen
       alert(
         `Lever potten på ${totalBet} til ${
@@ -184,13 +187,16 @@ async function fetchPokemon() {
       // Skjul deliverPotButton og start neste runde.
       deliverPotButton.style.display = "none";
       newRoundButton.style.display = "block";
+
+      // Tilbakestill currentBet
+      currentBet = 0;
     };
   };
 
   // Sjekk om spillet er over
 
-  function winner(){
-    alert("Gratulerer! Du vant spillet!")
+  function winner() {
+    alert("Gratulerer! Du vant spillet!");
   }
 
   function gameOver() {
@@ -249,6 +255,7 @@ async function fetchPokemon() {
 
 function createPokemonDiv(pokemonData, i) {
   let pokemonDiv = document.createElement("div");
+  pokemonDiv.id = "player" + i;
   pokemonDiv.className = "pokemon";
   pokemonDiv.style.backgroundColor = "white";
   pokemonDiv.style.borderRadius = "50%";
@@ -285,6 +292,7 @@ function createPokemonDiv(pokemonData, i) {
 }
 
 function getGameSettings() {
+console.log("getGameSettings() kjørt");
   numPlayers = prompt("Hvor mange spillere vil du utfordre?");
   gender = prompt("Vil du være en jente eller en gutt?");
   totalPot = numPlayers * 40 + 40; //  TotalPot med det totale antallet baller, plusser på 40 for å inkludere mainPlayer, noe som gjør at totalPot er 40 mer enn antall motspillere.
@@ -295,7 +303,7 @@ function getGameSettings() {
   document.body.appendChild(potDiv);
 }
 
-window.onload = async function () {
+window.onload =  async function () {
   getGameSettings();
 
   backgroundImage = document.createElement("img");
@@ -331,7 +339,6 @@ window.onload = async function () {
   document.body.appendChild(rulesDiv);
 
   await fetchPokemon();
-  console.log("fetchPokemon() kjørt");
 };
 
 /*
@@ -341,9 +348,7 @@ REFERANSER:
 2. Bok - Koding for alle i JavaScript, av Terje Kolderup
 3. Spred operator - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
 
-*/
 
-/* 
 MANGLER I KODEN:
 
 - Jeg finner ikke ut av hvorfor du blir promptet om å skrive inn antall spillere og kjønn to ganger.Dette er en bug jeg ville brukt mer tid på å fikse, hadde det ikke vært for tidsfristen.
