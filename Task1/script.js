@@ -188,9 +188,8 @@ async function fetchPokemon() {
 
   let createPokemonButton = document.getElementById("create-pokemon");
 
-  // Lager en eventListener som lytter etter klikk på knappen
+  // Lager en eventListener som lytter etter klikk på knappen og som spør brukeren om navn og type på den nye Pokemonen.
   createPokemonButton.addEventListener("click", function () {
-    // Prompt the user for the name and type of the new Pokemon
     let name = prompt("Skriv inn navnet på den nye Pokemonen:");
     let type = prompt("Skriv inn typen til den nye Pokemonen:");
 
